@@ -1,6 +1,7 @@
 package view;
 
 import java.awt.EventQueue;
+import java.sql.SQLException;
 
 import javax.swing.JFrame;
 
@@ -10,20 +11,25 @@ public class AWSplash {
 
 	/**
 	 * Create the application.
+	 * @throws SQLException 
 	 */
-	public AWSplash() {
+	public AWSplash() throws SQLException {
 		initialize();
 	}
 
 	/**
 	 * Initialize the contents of the frame.
+	 * @throws SQLException 
 	 */
-	private void initialize() {
+	private void initialize() throws SQLException {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		if(verificarMySQL()) new JFLogin().setVisible(true); else System.exit(0);
+		
+		this.frame.dispose();
+		
 	}
 	private boolean verificarMySQL(){
 		try {
