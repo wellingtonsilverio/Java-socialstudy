@@ -18,6 +18,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -32,11 +33,12 @@ public class JFLogin extends JFrame {
 	private JPanel contentPane;
 	private JTextField tfEmail;
 	private JPasswordField tfSenha;
+	private Conexao objCon;
 
 	/**
 	 * Create the frame.
 	 */
-	public JFLogin() throws SQLException {
+	public JFLogin(){
 		setUndecorated(true);
 		setTitle("Login SocialStudy");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -73,8 +75,7 @@ public class JFLogin extends JFrame {
 		tfSenha.setBounds(64, 143, 307, 20);
 		contentPane.add(tfSenha);
 		
-		final Conexao objConn = new Conexao();
-		final Connection conn =  objConn.conexao;
+		objCon = new Conexao();
 		
 		JButton btnLogar = new JButton("Logar");
 		btnLogar.addActionListener(new ActionListener() {
@@ -86,22 +87,31 @@ public class JFLogin extends JFrame {
 					JOptionPane.showMessageDialog(null, "Digite sua senha.");
 					tfSenha.requestFocus();
 				}else{
-					String sqlSelect = "select * from `users` where usr_email = ?";
-					
 					try {
-						objConn.statement = conn.prepareStatement(sqlSelect);
-						((PreparedStatement) objConn.statement).setString(1, tfEmail.getText());
-						
-						objConn.resultSet = objConn.statement.executeQuery(sqlSelect);
-						
-						if (objConn.resultSet.next()){
-							JOptionPane.showMessageDialog(null, objConn.resultSet.getString(1));
-						}
-						
+						Connection conn = objCon.conexao;
+						PreparedStatement stmt = null;
+				        String sql;
+				        sql = "SELECT * FROM users where usr_email = ? AND usr_senha = ?";
+				        stmt = conn.prepareStatement(sql);
+				        stmt.setString(1, tfEmail.getText());
+				        stmt.setString(2, new String(tfSenha.getPassword()));
+				        ResultSet rs = stmt.executeQuery();
+				        //STEP 5: Extract data from result set
+					    while(rs.next()){
+					       //Retrieve by column name
+						       int id  = rs.getInt("usr_id");
+						       String nome  = rs.getString("usr_nome");
+					       //Display values
+					       JOptionPane.showMessageDialog(null, "Nome: " + nome);
+					    }
+					    //STEP 6: Clean-up environment
+					    rs.close();
+					    stmt.close();
+					    conn.close();
 					} catch (Exception e) {
 						// TODO: handle exception
-						JOptionPane.showMessageDialog(null, "Erro: "+e);
 					}
+			        
 				}
 			}
 		});
