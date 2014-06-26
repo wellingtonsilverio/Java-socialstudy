@@ -62,6 +62,8 @@ public class JFPainel extends JFrame {
 	private JToggleButton tglbtnMinhasRespostas, tglbtnMeusSeguidores, tglbtnAbrirJuntoDo, tglbtnMinhasPerguntas, tglbtnLogarAutomaticamente, btnAbrirMinimizado;
 	private JFrame form = this; 
 	
+	private URL urlImage;
+	
 	Connection con;
 	
 	//Imagem no Painel
@@ -121,13 +123,19 @@ public class JFPainel extends JFrame {
 		panel.setLayout(null);
 		
 		try {
-			image = ImageIO.read(new URL("http://localhost/rss/pags_logon/img/"+usrImage));
+			try {
+				urlImage = new URL("http://localhost/rss/pags_logon/img/"+usrImage);
+			} catch (Exception e) {
+				// TODO: handle exception
+				urlImage = null;
+			}
+			image = ImageIO.read(urlImage);
 			JLabel lblImagem = new JLabel(new ImageIcon(image));
 			lblImagem.setBounds(10, 11, 174, 174);
 			panel.add(lblImagem);
 		} catch (Exception e) {
 			// TODO: handle exception
-			JOptionPane.showMessageDialog(null, "Erro: "+e);
+			//JOptionPane.showMessageDialog(null, "Erro: "+e);
 		}
 		
 		JLabel lblNome = new JLabel("Nome:");
