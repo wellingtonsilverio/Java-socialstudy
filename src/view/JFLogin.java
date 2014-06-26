@@ -33,12 +33,13 @@ public class JFLogin extends JFrame {
 	private JPanel contentPane;
 	private JTextField tfEmail;
 	private JPasswordField tfSenha;
-	private Conexao objCon;
+	private Connection conn;
 
 	/**
 	 * Create the frame.
 	 */
-	public JFLogin(){
+	public JFLogin(Connection con){
+		this.conn = con;
 		setUndecorated(true);
 		setTitle("Login SocialStudy");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -75,8 +76,6 @@ public class JFLogin extends JFrame {
 		tfSenha.setBounds(64, 143, 307, 20);
 		contentPane.add(tfSenha);
 		
-		objCon = new Conexao();
-		
 		JButton btnLogar = new JButton("Logar");
 		btnLogar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -88,7 +87,6 @@ public class JFLogin extends JFrame {
 					tfSenha.requestFocus();
 				}else{
 					try {
-						Connection conn = objCon.conexao;
 						PreparedStatement stmt = null;
 				        String sql;
 				        sql = "SELECT * FROM users where usr_email = ? AND usr_senha = ?";
@@ -99,17 +97,16 @@ public class JFLogin extends JFrame {
 				        //STEP 5: Extract data from result set
 					    while(rs.next()){
 					       //Retrieve by column name
-						       int id  = rs.getInt("usr_id");
-						       String nome  = rs.getString("usr_nome");
-					       //Display values
-					       JOptionPane.showMessageDialog(null, "Nome: " + nome);
+						   int usrID  = rs.getInt("usr_id");
+						   new JFPainel(usrID, conn).setVisible(true);
 					    }
-					    //STEP 6: Clean-up environment
 					    rs.close();
 					    stmt.close();
 					    conn.close();
+					    dispose();
 					} catch (Exception e) {
 						// TODO: handle exception
+						JOptionPane.showMessageDialog(null, "Erro: "+e);
 					}
 			        
 				}
@@ -118,13 +115,9 @@ public class JFLogin extends JFrame {
 		btnLogar.setBounds(105, 203, 214, 50);
 		contentPane.add(btnLogar);
 		
-		JToggleButton tglbtnLogarAutomaticamente = new JToggleButton("Login Automatico");
-		tglbtnLogarAutomaticamente.setBounds(64, 169, 150, 23);
-		contentPane.add(tglbtnLogarAutomaticamente);
-		
 		JToggleButton tglbtnLembrarEmail = new JToggleButton("Lembrar E-mail");
 		tglbtnLembrarEmail.setSelected(true);
-		tglbtnLembrarEmail.setBounds(221, 169, 150, 23);
+		tglbtnLembrarEmail.setBounds(61, 169, 300, 23);
 		contentPane.add(tglbtnLembrarEmail);
 	}
 }

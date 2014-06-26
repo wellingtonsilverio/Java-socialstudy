@@ -26,7 +26,7 @@ public class AWSplash {
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		if(verificarMySQL()) new JFLogin().setVisible(true); else System.exit(0);
+		//if(verificarMySQL()) new JFLogin().setVisible(true); else System.exit(0);
 		
 		this.frame.dispose();
 		

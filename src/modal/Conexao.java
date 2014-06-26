@@ -18,7 +18,6 @@ public class Conexao {
 		 try {
 			Class.forName(driver);
 			this.conexao = DriverManager.getConnection(url,usuario,senha);
-	         JOptionPane.showMessageDialog(null, "Sucesso conexao.");
 	         
 		} catch (Exception e) {
 			// TODO: handle exception

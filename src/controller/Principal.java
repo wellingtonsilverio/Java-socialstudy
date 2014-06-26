@@ -1,8 +1,11 @@
 package controller;
 
 import java.awt.EventQueue;
+import java.sql.Connection;
 
+import modal.Conexao;
 import view.AWSplash;
+import view.JFLogin;
 
 public class Principal {
 	/**
@@ -12,8 +15,10 @@ public class Principal {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					AWSplash window = new AWSplash();
-					window.frame.setVisible(false);
+					Conexao objCon = new Conexao();
+					Connection conn = objCon.conexao;
+					JFLogin window = new JFLogin(conn);
+					window.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
