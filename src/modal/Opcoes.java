@@ -5,6 +5,8 @@ import java.awt.SystemTray;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -22,12 +24,13 @@ import javax.swing.JToggleButton;
 
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 
 public class Opcoes {
 	private int intTempoVeri;
-	private boolean blnNovaResp, blnNovaPerg, blnSeguidor, blnAbrirWin, blnLogAuto;
+	private boolean blnNovaResp, blnNovaPerg, blnSeguidor, blnAbrirWin, blnLogAuto, blnAbrirTray;
 	private JFrame jForm;
 	
 	private SystemTray tray;
@@ -39,6 +42,14 @@ public class Opcoes {
 
 	public void setIntTempoVeri(int intTempoVeri) {
 		this.intTempoVeri = intTempoVeri;
+	}
+
+	public boolean isBlnAbrirTray() {
+		return blnAbrirTray;
+	}
+
+	public void setBlnAbrirTray(boolean blnAbrirTray) {
+		this.blnAbrirTray = blnAbrirTray;
 	}
 
 	public boolean isBlnNovaResp() {
@@ -96,6 +107,7 @@ public class Opcoes {
 					if(linha.charAt(2) == 't') blnSeguidor = true; else blnSeguidor = false;
 					if(linha.charAt(3) == 't') blnAbrirWin = true; else blnAbrirWin = false;
 					if(linha.charAt(4) == 't') blnLogAuto = true; else blnLogAuto = false;
+					if(linha.charAt(5) == 't') blnAbrirTray = true; else blnAbrirTray = false;
 				}
 			}
 			
@@ -108,10 +120,11 @@ public class Opcoes {
 			blnSeguidor = true;
 			blnAbrirWin = true;
 			blnLogAuto = true;
+			blnAbrirTray = true;
 		}
 	}
 	
-	public void salvarAlteracies(ActionListener actionListener, ActionEvent arg0, JComboBox comboBox, JSpinner spinner, JToggleButton tglbtnMinhasRespostas, JToggleButton tglbtnMeusSeguidores, JToggleButton tglbtnAbrirJuntoDo, JToggleButton tglbtnMinhasPerguntas, JToggleButton tglbtnLogarAutomaticamente){
+	public void salvarAlteracies(ActionListener actionListener, ActionEvent arg0, JComboBox comboBox, JSpinner spinner, JToggleButton tglbtnMinhasRespostas, JToggleButton tglbtnMeusSeguidores, JToggleButton tglbtnAbrirJuntoDo, JToggleButton tglbtnMinhasPerguntas, JToggleButton tglbtnLogarAutomaticamente, JToggleButton btnAbrirMinimizado){
 		try {
 			FileReader arq = new FileReader("conf/.info.ss");
 			BufferedReader lerArq = new BufferedReader(arq);
@@ -132,6 +145,7 @@ public class Opcoes {
 						if(tglbtnMeusSeguidores.isSelected()) novaLinha += "t"; else novaLinha += "f";
 						if(tglbtnAbrirJuntoDo.isSelected()) novaLinha += "t"; else novaLinha += "f";
 						if(tglbtnLogarAutomaticamente.isSelected()) novaLinha += "t"; else novaLinha += "f";
+						if(btnAbrirMinimizado.isSelected()) novaLinha += "t"; else novaLinha += "f";
 						linhaEscrever += novaLinha+"\r\n";
 					}else{
 						linhaEscrever += linha+"\r\n";
@@ -166,7 +180,7 @@ public class Opcoes {
 			arqW = new FileWriter("conf/.info.ss");
 	   		arqW.write("c"+"\r\n");
 	   		arqW.write("120"+"\r\n");
-	   		arqW.write("tttttt"+"\r\n");
+	   		arqW.write("ttttttt"+"\r\n");
 	   		arqW.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -208,6 +222,37 @@ public class Opcoes {
 			
 			icoTray = new TrayIcon(img, "SocialStudy", popupMenu);
 			icoTray.setImageAutoSize(true);
+			icoTray.addMouseListener(new MouseListener() {
+
+				public void mouseClicked(MouseEvent e) {
+					// TODO Auto-generated method stub
+					if(e.getClickCount() >= 2 && e.getButton() == MouseEvent.BUTTON1){
+						tray.remove(icoTray);
+						jForm.setVisible(true);
+					}
+				}
+
+				public void mouseEntered(MouseEvent arg0) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				public void mouseExited(MouseEvent arg0) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				public void mousePressed(MouseEvent e) {
+					// TODO Auto-generated method stub
+					
+					
+				}
+
+				public void mouseReleased(MouseEvent arg0) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
 			
 			try {
 				tray.add(icoTray);

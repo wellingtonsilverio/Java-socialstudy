@@ -3,6 +3,7 @@ package view;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.Graphics;
+import java.awt.Toolkit;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -58,7 +59,7 @@ public class JFPainel extends JFrame {
 	int usrNivel = 0;
 	private JComboBox comboBox;
 	private JSpinner spinner;
-	private JToggleButton tglbtnMinhasRespostas, tglbtnMeusSeguidores, tglbtnAbrirJuntoDo, tglbtnMinhasPerguntas, tglbtnLogarAutomaticamente;
+	private JToggleButton tglbtnMinhasRespostas, tglbtnMeusSeguidores, tglbtnAbrirJuntoDo, tglbtnMinhasPerguntas, tglbtnLogarAutomaticamente, btnAbrirMinimizado;
 	private JFrame form = this; 
 	
 	Connection con;
@@ -97,14 +98,17 @@ public class JFPainel extends JFrame {
 			//this.con.close();
 		} catch (Exception e) {
 			// TODO: handle exception
-			JOptionPane.showMessageDialog(null, "Erro: "+e);
+			//JOptionPane.showMessageDialog(null, "Erro: "+e);
 			new JFLogin(con, false).setVisible(true);
 			this.dispose();
+			this.form.setVisible(false);
+			this.form.dispose();
 		}
 		
 		setUndecorated(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 400, 550);
+		setIconImage(Toolkit.getDefaultToolkit().getImage("Imagens/logo.png"));
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -155,8 +159,13 @@ public class JFPainel extends JFrame {
 		JButton btnSair = new JButton("Sair");
 		btnSair.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				new JFLogin(con, false).setVisible(true);
-				dispose();
+				int dLogoof = JOptionPane.showConfirmDialog(null, "Deseja fazer logoff?");
+				if(dLogoof == JOptionPane.YES_OPTION){
+					new JFLogin(con, false).setVisible(true);
+					dispose();
+				}else if(dLogoof == JOptionPane.NO_OPTION){
+					System.exit(0);
+				}
 			}
 		});
 		btnSair.setBounds(198, 166, 89, 23);
@@ -219,10 +228,15 @@ public class JFPainel extends JFrame {
 		tglbtnLogarAutomaticamente.setBounds(188, 287, 192, 40);
 		contentPane.add(tglbtnLogarAutomaticamente);
 		
+		btnAbrirMinimizado = new JToggleButton("Abrir Minimizado");
+		btnAbrirMinimizado.setSelected(objOpc.isBlnAbrirTray());
+		btnAbrirMinimizado.setBounds(190, 338, 190, 40);
+		contentPane.add(btnAbrirMinimizado);
+		
 		JButton btnSalvarConfiguraes = new JButton("Salvar Configura\u00E7\u00F5es");
 		btnSalvarConfiguraes.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				objOpc.salvarAlteracies(this, arg0, comboBox, spinner, tglbtnMinhasRespostas, tglbtnMeusSeguidores, tglbtnAbrirJuntoDo, tglbtnMinhasPerguntas, tglbtnLogarAutomaticamente);
+				objOpc.salvarAlteracies(this, arg0, comboBox, spinner, tglbtnMinhasRespostas, tglbtnMeusSeguidores, tglbtnAbrirJuntoDo, tglbtnMinhasPerguntas, tglbtnLogarAutomaticamente, btnAbrirMinimizado);
 			}
 		});
 		btnSalvarConfiguraes.setBounds(10, 485, 180, 54);
@@ -240,6 +254,7 @@ public class JFPainel extends JFrame {
 		if(tglbtnLogarAutomaticamente.isSelected()){
 			salvarArquivoES();
 		}
+		if(objOpc.isBlnAbrirTray()) objOpc.fechar(form); else setVisible(true);
 	}
 	
 	public static String makeSHA1Hash(String input)

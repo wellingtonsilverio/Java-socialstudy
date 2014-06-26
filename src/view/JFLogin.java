@@ -8,6 +8,7 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
+import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -75,6 +76,7 @@ public class JFLogin extends JFrame {
 		setTitle("Login SocialStudy");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
+		setIconImage(Toolkit.getDefaultToolkit().getImage("Imagens/logo.png"));
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.WHITE);
 		contentPane.setBorder(null);
@@ -202,7 +204,7 @@ public class JFLogin extends JFrame {
 		    if(rs.next()){
 		    	if(makeSHA1Hash(rs.getString("usr_senha")).equals(senhaCodif)){
 			    	int usrID  = rs.getInt("usr_id");
-				    new JFPainel(usrID, conn).setVisible(true);
+				    new JFPainel(usrID, conn);
 				    rs.close();
 				    stmt.close();
 				    return true;
