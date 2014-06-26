@@ -1,16 +1,65 @@
 package modal;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.Scanner;
 
 public class Opcoes {
 	private int intTempoVeri;
 	private boolean blnNovaResp, blnNovaPerg, blnSeguidor, blnAbrirWin, blnLogAuto;
 	
+	public int getIntTempoVeri() {
+		return intTempoVeri;
+	}
+
+	public void setIntTempoVeri(int intTempoVeri) {
+		this.intTempoVeri = intTempoVeri;
+	}
+
+	public boolean isBlnNovaResp() {
+		return blnNovaResp;
+	}
+
+	public void setBlnNovaResp(boolean blnNovaResp) {
+		this.blnNovaResp = blnNovaResp;
+	}
+
+	public boolean isBlnNovaPerg() {
+		return blnNovaPerg;
+	}
+
+	public void setBlnNovaPerg(boolean blnNovaPerg) {
+		this.blnNovaPerg = blnNovaPerg;
+	}
+
+	public boolean isBlnSeguidor() {
+		return blnSeguidor;
+	}
+
+	public void setBlnSeguidor(boolean blnSeguidor) {
+		this.blnSeguidor = blnSeguidor;
+	}
+
+	public boolean isBlnAbrirWin() {
+		return blnAbrirWin;
+	}
+
+	public void setBlnAbrirWin(boolean blnAbrirWin) {
+		this.blnAbrirWin = blnAbrirWin;
+	}
+
+	public boolean isBlnLogAuto() {
+		return blnLogAuto;
+	}
+
+	public void setBlnLogAuto(boolean blnLogAuto) {
+		this.blnLogAuto = blnLogAuto;
+	}
+
 	public Opcoes(){
 		try {
-			
 			FileReader arq = new FileReader("conf/.info.ss");
 			BufferedReader lerArq = new BufferedReader(arq);
 			String linha;

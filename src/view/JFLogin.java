@@ -1,13 +1,8 @@
 package view;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
-import java.awt.Window.Type;
 
 import javax.swing.JButton;
 
@@ -18,12 +13,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Scanner;
 
 import javax.swing.JLabel;
@@ -32,7 +24,6 @@ import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import javax.swing.JToggleButton;
 
-import modal.Conexao;
 
 public class JFLogin extends JFrame {
 
@@ -72,22 +63,7 @@ public class JFLogin extends JFrame {
 		lblNewLabel.setBounds(79, 69, 46, 14);
 		contentPane.add(lblNewLabel);
 		
-		//Ler se existe um e-mail salvo
-		try {
-			Scanner ler = new Scanner(System.in);
-			
-			FileReader arq = new FileReader("conf/.email.ss");
-			BufferedReader lerArq = new BufferedReader(arq);
-			String linha;
-			if((linha = lerArq.readLine()) != null){
-				emailSalvo = linha;
-				tfSenha.requestFocus();
-			}
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		
-		tfEmail = new JTextField(emailSalvo);
+		tfEmail = new JTextField("");
 		tfEmail.setBounds(64, 90, 307, 20);
 		contentPane.add(tfEmail);
 		tfEmail.setColumns(10);
@@ -101,7 +77,14 @@ public class JFLogin extends JFrame {
 		contentPane.add(tfSenha);
 		
 		tglbtnLembrarEmail = new JToggleButton("Lembrar E-mail");
-		tglbtnLembrarEmail.setSelected(true);
+		tglbtnLembrarEmail.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if(!(tglbtnLembrarEmail.isSelected())){
+					tfEmail.setText(null);
+					salvarArquivo();
+				}
+			}
+		});
 		tglbtnLembrarEmail.setBounds(61, 169, 300, 23);
 		contentPane.add(tglbtnLembrarEmail);
 		
@@ -129,28 +112,7 @@ public class JFLogin extends JFrame {
 						   int usrID  = rs.getInt("usr_id");
 						   new JFPainel(usrID, conn).setVisible(true);
 						   if(tglbtnLembrarEmail.isSelected()){
-							   
-							   	try {
-							   		FileWriter arq = new FileWriter("conf/.email.ss");
-									   
-							   		arq.write(tfEmail.getText());
-									   
-									arq.close();
-								} catch (Exception e) {
-									// TODO: handle exception
-									File diretorio = new File("conf");
-									diretorio.mkdir();
-									File arqF = new File(diretorio, ".email.ss");
-									arqF.createNewFile();
-									
-
-							   		FileWriter arq = new FileWriter("conf/.email.ss");
-									   
-							   		arq.write(tfEmail.getText());
-									   
-									arq.close();
-									
-								}
+							   salvarArquivo();
 							   
 						   }
 						   rs.close();
@@ -177,5 +139,45 @@ public class JFLogin extends JFrame {
 		});
 		btnLogar.setBounds(105, 203, 214, 50);
 		contentPane.add(btnLogar);
+		
+		//Ler se existe um e-mail salvo
+		try {			
+			FileReader arq = new FileReader("conf/.email.ss");
+			BufferedReader lerArq = new BufferedReader(arq);
+			String linha;
+			if((linha = lerArq.readLine()) != null){
+				if(linha != null || linha != ""){
+					tfEmail.setText(linha);
+					tglbtnLembrarEmail.setSelected(true);
+				}
+				tfSenha.requestFocus();
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+	}
+	public void salvarArquivo(){
+		try {
+	   		FileWriter arq = new FileWriter("conf/.email.ss");
+			   
+	   		arq.write(tfEmail.getText());
+			   
+			arq.close();
+		} catch (Exception e) {
+			// TODO: handle exception
+			try {
+				File diretorio = new File("conf");
+				diretorio.mkdir();
+				File arqF = new File(diretorio, ".email.ss");
+				arqF.createNewFile();
+				
+				salvarArquivo();
+				
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+			
+		}
 	}
 }

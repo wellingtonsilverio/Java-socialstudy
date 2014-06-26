@@ -2,7 +2,9 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.Graphics;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -19,11 +21,13 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import java.awt.Font;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JSpinner;
@@ -34,6 +38,8 @@ import javax.swing.JToggleButton;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
 
 public class JFPainel extends JFrame {
 
@@ -41,10 +47,18 @@ public class JFPainel extends JFrame {
 	
 	Opcoes objOpc = new Opcoes();
 	
-	String usrNome = "", usrSobrenome = "", usrGenero = "";
+	String usrNome = "", usrSobrenome = "", usrGenero = "", usrImage = "";
 	int usrNivel = 0;
 	
 	Connection con;
+	
+	//Imagem no Painel
+	private BufferedImage image;
+	
+	protected void paintComponent(Graphics g){
+		super.paintComponents(g);
+		g.drawImage(image, 0, 0, null);
+	}
 
 
 	/**
@@ -65,6 +79,7 @@ public class JFPainel extends JFrame {
 		        usrSobrenome = rs.getString("usr_sobrenome");
 		        usrNivel = rs.getInt("usr_level");
 		        usrGenero = rs.getString("usr_genero");
+		        usrImage = rs.getString("usr_image");
 	        }
 			//this.con.close();
 		} catch (Exception e) {
@@ -88,9 +103,15 @@ public class JFPainel extends JFrame {
 		contentPane.add(panel);
 		panel.setLayout(null);
 		
-		JPanel photo = new JPanel();
-		photo.setBounds(10, 11, 178, 178);
-		panel.add(photo);
+		try {
+			image = ImageIO.read(new URL("http://localhost/rss/pags_logon/img/"+usrImage));
+			JLabel lblImagem = new JLabel(new ImageIcon(image));
+			lblImagem.setBounds(10, 11, 174, 174);
+			panel.add(lblImagem);
+		} catch (Exception e) {
+			// TODO: handle exception
+			JOptionPane.showMessageDialog(null, "Erro: "+e);
+		}
 		
 		JLabel lblNome = new JLabel("Nome:");
 		lblNome.setBounds(216, 11, 119, 14);
@@ -137,13 +158,13 @@ public class JFPainel extends JFrame {
 		contentPane.add(lblTempoParaAtualizao);
 		
 		JSpinner spinner = new JSpinner();
-		spinner.setModel(new SpinnerNumberModel(1, 1, 60, 1));
+		spinner.setModel(new SpinnerNumberModel(objOpc.getIntTempoVeri(), 1, 999999, 1));
 		spinner.setBounds(10, 236, 60, 20);
 		contentPane.add(spinner);
 		
 		JComboBox comboBox = new JComboBox();
 		comboBox.setModel(new DefaultComboBoxModel(new String[] {"Minutos", "Horas"}));
-		comboBox.setSelectedIndex(1);
+		comboBox.setSelectedIndex(0);
 		comboBox.setBounds(80, 236, 76, 20);
 		contentPane.add(comboBox);
 		
@@ -152,14 +173,17 @@ public class JFPainel extends JFrame {
 		contentPane.add(lblOpesDeApresentao);
 		
 		JToggleButton tglbtnMinhasPerguntas = new JToggleButton("Novas Perguntas");
+		tglbtnMinhasPerguntas.setSelected(objOpc.isBlnNovaPerg());
 		tglbtnMinhasPerguntas.setBounds(10, 292, 170, 40);
 		contentPane.add(tglbtnMinhasPerguntas);
 		
 		JToggleButton tglbtnMinhasRespostas = new JToggleButton("Novas respostas");
+		tglbtnMinhasRespostas.setSelected(objOpc.isBlnNovaResp());
 		tglbtnMinhasRespostas.setBounds(10, 343, 170, 40);
 		contentPane.add(tglbtnMinhasRespostas);
 		
 		JToggleButton tglbtnMeusSeguidores = new JToggleButton("Meus Seguidores");
+		tglbtnMeusSeguidores.setSelected(objOpc.isBlnSeguidor());
 		tglbtnMeusSeguidores.setBounds(10, 394, 170, 40);
 		contentPane.add(tglbtnMeusSeguidores);
 		
@@ -168,10 +192,12 @@ public class JFPainel extends JFrame {
 		contentPane.add(lblOpesDeDefinio);
 		
 		JToggleButton tglbtnAbrirJuntoDo = new JToggleButton("Abrir Junto do Windows");
+		tglbtnAbrirJuntoDo.setSelected(objOpc.isBlnAbrirWin());
 		tglbtnAbrirJuntoDo.setBounds(188, 236, 192, 40);
 		contentPane.add(tglbtnAbrirJuntoDo);
 		
 		JToggleButton tglbtnLogarAutomaticamente = new JToggleButton("Logar Automaticamente");
+		tglbtnLogarAutomaticamente.setSelected(objOpc.isBlnLogAuto());
 		tglbtnLogarAutomaticamente.setBounds(188, 287, 192, 40);
 		contentPane.add(tglbtnLogarAutomaticamente);
 		
@@ -183,4 +209,6 @@ public class JFPainel extends JFrame {
 		btnRedefinirPadro.setBounds(200, 485, 180, 54);
 		contentPane.add(btnRedefinirPadro);
 	}
+	
+	
 }
