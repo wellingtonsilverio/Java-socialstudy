@@ -1,5 +1,8 @@
 package modal;
 
+import java.awt.Image;
+import java.awt.SystemTray;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -9,15 +12,26 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
+import javafx.stage.Popup;
+
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JSpinner;
 import javax.swing.JToggleButton;
 
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.JFrame;
+import javax.swing.UIManager;
+
 public class Opcoes {
 	private int intTempoVeri;
 	private boolean blnNovaResp, blnNovaPerg, blnSeguidor, blnAbrirWin, blnLogAuto;
+	private JFrame jForm;
+	
+	private SystemTray tray;
+	private TrayIcon icoTray;
 	
 	public int getIntTempoVeri() {
 		return intTempoVeri;
@@ -161,8 +175,7 @@ public class Opcoes {
 				diretorio.mkdir();
 				File arqF = new File(diretorio, ".info.ss");
 				arqF.createNewFile();
-				
-				actionListener.actionPerformed(arg0);
+				if(actionListener != null) actionListener.actionPerformed(arg0);
 				
 			} catch (Exception e2) {
 				// TODO: handle exception
@@ -170,7 +183,39 @@ public class Opcoes {
 		}
 	}
 	public void fechar(JFrame form){
-		
+		this.jForm = form;
+		if(tray.isSupported()){
+			tray = SystemTray.getSystemTray();
+			
+			Image img = Toolkit.getDefaultToolkit().getImage("Imagens/logo.png");
+			
+			PopupMenu popupMenu = new PopupMenu();
+			MenuItem defaultItem = new MenuItem("Sair do SocialStudy");
+			defaultItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					System.exit(0);
+				}
+			});
+			popupMenu.add(defaultItem);
+			defaultItem = new MenuItem("Abrir Opções");
+			defaultItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					tray.remove(icoTray);
+					jForm.setVisible(true);
+				}
+			});
+			popupMenu.add(defaultItem);
+			
+			icoTray = new TrayIcon(img, "SocialStudy", popupMenu);
+			icoTray.setImageAutoSize(true);
+			
+			try {
+				tray.add(icoTray);
+				jForm.setVisible(false);
+			} catch (Exception e) {
+			}
+			
+		}
 	}
 
 }

@@ -3,3 +3,4 @@ http://forum.wmonline.com.br/topic/132605-como-fazer-um-onclick-abrir-em-janela-
 http://javafree.uol.com.br/topic-10924-Int-para-String.html
 http://www.codigosfontes.com.br/utilizando-o-encode-sha1-no-java/
 http://www.guj.com.br/java/6679-deletar-arquivo-fisico
+http://stackoverflow.com/questions/7461477/how-to-hide-a-jframe-in-system-tray-of-taskbar
