@@ -10,7 +10,6 @@ public class Opcoes {
 	
 	public Opcoes(){
 		try {
-			Scanner ler = new Scanner(System.in);
 			
 			FileReader arq = new FileReader("conf/.info.ss");
 			BufferedReader lerArq = new BufferedReader(arq);

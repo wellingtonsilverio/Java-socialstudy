@@ -22,6 +22,7 @@ import java.awt.Font;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
@@ -30,6 +31,7 @@ import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.JToggleButton;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -55,7 +57,7 @@ public class JFPainel extends JFrame {
 			PreparedStatement stmt = null;
 	        String sql;
 	        sql = "SELECT * FROM users where usr_id = ?";
-	        stmt = conn.prepareStatement(sql);
+	        stmt = con.prepareStatement(sql);
 	        stmt.setInt(1, usrID);
 	        ResultSet rs = stmt.executeQuery();
 	        if(rs.next()){
@@ -64,10 +66,11 @@ public class JFPainel extends JFrame {
 		        usrNivel = rs.getInt("usr_level");
 		        usrGenero = rs.getString("usr_genero");
 	        }
+			//this.con.close();
 		} catch (Exception e) {
 			// TODO: handle exception
 			JOptionPane.showMessageDialog(null, "Erro: "+e);
-			new JFLogin(conn).setVisible(true);
+			new JFLogin(con).setVisible(true);
 			this.dispose();
 		}
 		

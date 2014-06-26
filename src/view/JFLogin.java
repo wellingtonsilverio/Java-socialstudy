@@ -14,11 +14,17 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Scanner;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -34,6 +40,9 @@ public class JFLogin extends JFrame {
 	private JTextField tfEmail;
 	private JPasswordField tfSenha;
 	private Connection conn;
+	private String emailSalvo = null;
+	private JToggleButton tglbtnLembrarEmail;
+	private int intTentativas = 0;
 
 	/**
 	 * Create the frame.
@@ -63,7 +72,22 @@ public class JFLogin extends JFrame {
 		lblNewLabel.setBounds(79, 69, 46, 14);
 		contentPane.add(lblNewLabel);
 		
-		tfEmail = new JTextField();
+		//Ler se existe um e-mail salvo
+		try {
+			Scanner ler = new Scanner(System.in);
+			
+			FileReader arq = new FileReader("conf/.email.ss");
+			BufferedReader lerArq = new BufferedReader(arq);
+			String linha;
+			if((linha = lerArq.readLine()) != null){
+				emailSalvo = linha;
+				tfSenha.requestFocus();
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		tfEmail = new JTextField(emailSalvo);
 		tfEmail.setBounds(64, 90, 307, 20);
 		contentPane.add(tfEmail);
 		tfEmail.setColumns(10);
@@ -75,6 +99,11 @@ public class JFLogin extends JFrame {
 		tfSenha = new JPasswordField();
 		tfSenha.setBounds(64, 143, 307, 20);
 		contentPane.add(tfSenha);
+		
+		tglbtnLembrarEmail = new JToggleButton("Lembrar E-mail");
+		tglbtnLembrarEmail.setSelected(true);
+		tglbtnLembrarEmail.setBounds(61, 169, 300, 23);
+		contentPane.add(tglbtnLembrarEmail);
 		
 		JButton btnLogar = new JButton("Logar");
 		btnLogar.addActionListener(new ActionListener() {
@@ -95,15 +124,49 @@ public class JFLogin extends JFrame {
 				        stmt.setString(2, new String(tfSenha.getPassword()));
 				        ResultSet rs = stmt.executeQuery();
 				        //STEP 5: Extract data from result set
-					    while(rs.next()){
+					    if(rs.next()){
 					       //Retrieve by column name
 						   int usrID  = rs.getInt("usr_id");
 						   new JFPainel(usrID, conn).setVisible(true);
+						   if(tglbtnLembrarEmail.isSelected()){
+							   
+							   	try {
+							   		FileWriter arq = new FileWriter("conf/.email.ss");
+									   
+							   		arq.write(tfEmail.getText());
+									   
+									arq.close();
+								} catch (Exception e) {
+									// TODO: handle exception
+									File diretorio = new File("conf");
+									diretorio.mkdir();
+									File arqF = new File(diretorio, ".email.ss");
+									arqF.createNewFile();
+									
+
+							   		FileWriter arq = new FileWriter("conf/.email.ss");
+									   
+							   		arq.write(tfEmail.getText());
+									   
+									arq.close();
+									
+								}
+							   
+						   }
+						   rs.close();
+						   stmt.close();
+						   //conn.close();
+						   dispose();
+					    }else{
+					    	JOptionPane.showMessageDialog(null, "Login ou Senha está incorreto.");
+							rs.close();
+							stmt.close();
+							intTentativas++;
+							if(intTentativas > 3){
+								new JFLogin(conn).setVisible(true);
+								dispose();
+							}
 					    }
-					    rs.close();
-					    stmt.close();
-					    conn.close();
-					    dispose();
 					} catch (Exception e) {
 						// TODO: handle exception
 						JOptionPane.showMessageDialog(null, "Erro: "+e);
@@ -114,10 +177,5 @@ public class JFLogin extends JFrame {
 		});
 		btnLogar.setBounds(105, 203, 214, 50);
 		contentPane.add(btnLogar);
-		
-		JToggleButton tglbtnLembrarEmail = new JToggleButton("Lembrar E-mail");
-		tglbtnLembrarEmail.setSelected(true);
-		tglbtnLembrarEmail.setBounds(61, 169, 300, 23);
-		contentPane.add(tglbtnLembrarEmail);
 	}
 }
