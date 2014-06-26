@@ -1,3 +1,3 @@
 c
-60
-tttft
+120
+ffttf

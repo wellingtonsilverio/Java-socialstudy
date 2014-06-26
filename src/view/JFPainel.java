@@ -22,6 +22,8 @@ import javax.swing.JTextField;
 
 import java.awt.Font;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -39,7 +41,11 @@ import javax.swing.JToggleButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class JFPainel extends JFrame {
 
@@ -48,7 +54,12 @@ public class JFPainel extends JFrame {
 	Opcoes objOpc = new Opcoes();
 	
 	String usrNome = "", usrSobrenome = "", usrGenero = "", usrImage = "";
+	private String usrSenha = "", usrEmail = "";
 	int usrNivel = 0;
+	private JToggleButton tglbtnLogarAutomaticamente;
+	private JComboBox comboBox;
+	private JSpinner spinner;
+	private JToggleButton tglbtnMinhasRespostas, tglbtnMeusSeguidores, tglbtnAbrirJuntoDo, tglbtnMinhasPerguntas;
 	
 	Connection con;
 	
@@ -80,12 +91,14 @@ public class JFPainel extends JFrame {
 		        usrNivel = rs.getInt("usr_level");
 		        usrGenero = rs.getString("usr_genero");
 		        usrImage = rs.getString("usr_image");
+		        usrSenha = rs.getString("usr_senha");
+		        usrEmail = rs.getString("usr_email");
 	        }
 			//this.con.close();
 		} catch (Exception e) {
 			// TODO: handle exception
 			JOptionPane.showMessageDialog(null, "Erro: "+e);
-			new JFLogin(con).setVisible(true);
+			new JFLogin(con, false).setVisible(true);
 			this.dispose();
 		}
 		
@@ -124,11 +137,11 @@ public class JFPainel extends JFrame {
 		
 		JLabel sobrenome = new JLabel(usrSobrenome);
 		sobrenome.setFont(new Font("Tahoma", Font.BOLD, 14));
-		sobrenome.setBounds(198, 88, 192, 30);
+		sobrenome.setBounds(194, 88, 192, 30);
 		panel.add(sobrenome);
 		
 		JLabel Sobrenome = new JLabel("Sobrenome:");
-		Sobrenome.setBounds(216, 70, 119, 14);
+		Sobrenome.setBounds(212, 70, 119, 14);
 		panel.add(Sobrenome);
 		
 		JLabel Nivel = new JLabel("Nivel: "+usrNivel);
@@ -142,7 +155,7 @@ public class JFPainel extends JFrame {
 		JButton btnSair = new JButton("Sair");
 		btnSair.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				new JFLogin(con).setVisible(true);
+				new JFLogin(con, false).setVisible(true);
 				dispose();
 			}
 		});
@@ -157,12 +170,12 @@ public class JFPainel extends JFrame {
 		lblTempoParaAtualizao.setBounds(32, 211, 148, 14);
 		contentPane.add(lblTempoParaAtualizao);
 		
-		JSpinner spinner = new JSpinner();
+		spinner = new JSpinner();
 		spinner.setModel(new SpinnerNumberModel(objOpc.getIntTempoVeri(), 1, 999999, 1));
 		spinner.setBounds(10, 236, 60, 20);
 		contentPane.add(spinner);
 		
-		JComboBox comboBox = new JComboBox();
+		comboBox = new JComboBox();
 		comboBox.setModel(new DefaultComboBoxModel(new String[] {"Minutos", "Horas"}));
 		comboBox.setSelectedIndex(0);
 		comboBox.setBounds(80, 236, 76, 20);
@@ -172,17 +185,17 @@ public class JFPainel extends JFrame {
 		lblOpesDeApresentao.setBounds(32, 267, 148, 14);
 		contentPane.add(lblOpesDeApresentao);
 		
-		JToggleButton tglbtnMinhasPerguntas = new JToggleButton("Novas Perguntas");
+		tglbtnMinhasPerguntas = new JToggleButton("Novas Perguntas");
 		tglbtnMinhasPerguntas.setSelected(objOpc.isBlnNovaPerg());
 		tglbtnMinhasPerguntas.setBounds(10, 292, 170, 40);
 		contentPane.add(tglbtnMinhasPerguntas);
 		
-		JToggleButton tglbtnMinhasRespostas = new JToggleButton("Novas respostas");
+		tglbtnMinhasRespostas = new JToggleButton("Novas respostas");
 		tglbtnMinhasRespostas.setSelected(objOpc.isBlnNovaResp());
 		tglbtnMinhasRespostas.setBounds(10, 343, 170, 40);
 		contentPane.add(tglbtnMinhasRespostas);
 		
-		JToggleButton tglbtnMeusSeguidores = new JToggleButton("Meus Seguidores");
+		tglbtnMeusSeguidores = new JToggleButton("Meus Seguidores");
 		tglbtnMeusSeguidores.setSelected(objOpc.isBlnSeguidor());
 		tglbtnMeusSeguidores.setBounds(10, 394, 170, 40);
 		contentPane.add(tglbtnMeusSeguidores);
@@ -191,24 +204,146 @@ public class JFPainel extends JFrame {
 		lblOpesDeDefinio.setBounds(210, 211, 170, 14);
 		contentPane.add(lblOpesDeDefinio);
 		
-		JToggleButton tglbtnAbrirJuntoDo = new JToggleButton("Abrir Junto do Windows");
+		tglbtnAbrirJuntoDo = new JToggleButton("Abrir Junto do Windows");
 		tglbtnAbrirJuntoDo.setSelected(objOpc.isBlnAbrirWin());
 		tglbtnAbrirJuntoDo.setBounds(188, 236, 192, 40);
 		contentPane.add(tglbtnAbrirJuntoDo);
 		
-		JToggleButton tglbtnLogarAutomaticamente = new JToggleButton("Logar Automaticamente");
+		tglbtnLogarAutomaticamente = new JToggleButton("Logar Automaticamente");
 		tglbtnLogarAutomaticamente.setSelected(objOpc.isBlnLogAuto());
 		tglbtnLogarAutomaticamente.setBounds(188, 287, 192, 40);
 		contentPane.add(tglbtnLogarAutomaticamente);
 		
 		JButton btnSalvarConfiguraes = new JButton("Salvar Configura\u00E7\u00F5es");
+		btnSalvarConfiguraes.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if(!tglbtnLogarAutomaticamente.isSelected()){
+					try {
+						FileReader arq = new FileReader("conf/.info.ss");
+						BufferedReader lerArq = new BufferedReader(arq);
+						String linha;
+						while((linha = lerArq.readLine()) != null){
+							String linhaEscrever = "";
+							try {
+								
+								if(linha.charAt(0) == 'c'){
+									linhaEscrever += linha+"\r\n";
+									linha += lerArq.readLine();
+									if(comboBox.getSelectedIndex() == 0) linhaEscrever += String.valueOf(spinner.getValue())+"\r\n";
+									else if(comboBox.getSelectedIndex() == 1) linhaEscrever += String.valueOf(Integer.parseInt((String) spinner.getValue())*60)+"\r\n";
+									linha = lerArq.readLine();
+									String novaLinha = "";
+									if(tglbtnMinhasRespostas.isSelected()) novaLinha += "t"; else novaLinha += "f";
+									if(tglbtnMinhasPerguntas.isSelected()) novaLinha += "t"; else novaLinha += "f";
+									if(tglbtnMeusSeguidores.isSelected()) novaLinha += "t"; else novaLinha += "f";
+									if(tglbtnAbrirJuntoDo.isSelected()) novaLinha += "t"; else novaLinha += "f";
+									if(tglbtnLogarAutomaticamente.isSelected()) novaLinha += "t"; else novaLinha += "f";
+									linhaEscrever += novaLinha+"\r\n";
+								}else{
+									linhaEscrever += linha+"\r\n";
+								}
+								FileWriter arqW = new FileWriter("conf/.info.ss");
+								arqW.write(linhaEscrever);
+								arqW.close();
+							} catch (Exception e) {
+								// TODO: handle exception
+								try {
+									File diretorio = new File("conf");
+									diretorio.mkdir();
+									File arqF = new File(diretorio, ".info.ss");
+									arqF.createNewFile();
+									
+									actionPerformed(arg0);
+									
+								} catch (Exception e2) {
+									// TODO: handle exception
+								}
+							}
+						}
+						
+						
+					} catch (Exception e) {
+						JOptionPane.showMessageDialog(null, "Erro: "+e);
+					}
+				}
+			}
+		});
 		btnSalvarConfiguraes.setBounds(10, 485, 180, 54);
 		contentPane.add(btnSalvarConfiguraes);
 		
 		JButton btnRedefinirPadro = new JButton("Redefinir Padr\u00E3o");
+		btnRedefinirPadro.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				try {
+					FileWriter arqW;
+					arqW = new FileWriter("conf/.info.ss");
+			   		arqW.write("c"+"\r\n");
+			   		arqW.write("120"+"\r\n");
+			   		arqW.write("tttttt"+"\r\n");
+			   		arqW.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					try {
+						File diretorio = new File("conf");
+						diretorio.mkdir();
+						File arqF = new File(diretorio, ".info.ss");
+						arqF.createNewFile();
+						
+						actionPerformed(arg0);
+						
+					} catch (Exception e2) {
+						// TODO: handle exception
+					}
+				}
+			}
+		});
 		btnRedefinirPadro.setBounds(200, 485, 180, 54);
 		contentPane.add(btnRedefinirPadro);
+		
+		if(tglbtnLogarAutomaticamente.isSelected()){
+			salvarArquivoES();
+		}
 	}
 	
-	
+	public static String makeSHA1Hash(String input)
+            throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("SHA1");
+        md.reset();
+        byte[] buffer = input.getBytes();
+        md.update(buffer);
+        byte[] digest = md.digest();
+ 
+        String hexStr = "";
+        for (int i = 0; i < digest.length; i++) {
+            hexStr += Integer.toString((digest[i] & 0xff) + 0x100, 16).substring(1);
+        }
+        return hexStr;
+    }
+
+	public void salvarArquivoES(){
+		try {
+	   		FileWriter arq = new FileWriter("conf/.alces.ss");
+			
+	   		usrSenha = makeSHA1Hash(usrSenha);
+	   		
+	   		arq.write(usrEmail+"\r\n"+usrSenha);
+			   
+			arq.close();
+		} catch (Exception e) {
+			// TODO: handle exception
+			try {
+				File diretorio = new File("conf");
+				diretorio.mkdir();
+				File arqF = new File(diretorio, ".alces.ss");
+				arqF.createNewFile();
+				
+				salvarArquivoES();
+				
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+			
+		}
+	}
 }

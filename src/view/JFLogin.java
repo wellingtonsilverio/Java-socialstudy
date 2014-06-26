@@ -3,7 +3,6 @@ package view;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-
 import javax.swing.JButton;
 
 import java.awt.event.ActionListener;
@@ -13,6 +12,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -24,6 +25,9 @@ import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import javax.swing.JToggleButton;
 
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+
 
 public class JFLogin extends JFrame {
 
@@ -34,12 +38,39 @@ public class JFLogin extends JFrame {
 	private String emailSalvo = null;
 	private JToggleButton tglbtnLembrarEmail;
 	private int intTentativas = 0;
+	private String usrSenha = "", usrEmail = "";
 
 	/**
 	 * Create the frame.
 	 */
-	public JFLogin(Connection con){
-		this.conn = con;
+	public JFLogin(Connection con, boolean autoLog){
+		
+		this.conn = con;	
+		
+		
+		if(autoLog){
+			//Verificar se loga automaticamente.
+			try {
+				this.setVisible(false);
+				FileReader arq = new FileReader("conf/.alces.ss");
+				BufferedReader lerArq = new BufferedReader(arq);
+				String linha;
+				if((linha = lerArq.readLine()) != null){
+					usrEmail = linha;
+					linha = lerArq.readLine();
+					usrSenha = linha;
+					
+					if(verificarLogin(usrEmail, usrSenha) == true) this.dispose();
+					
+				}
+			} catch (Exception e) {
+				// TODO: handle exception
+				new JFLogin(con, false).setVisible(true);
+				this.dispose();
+			}
+		}
+		
+		
 		setUndecorated(true);
 		setTitle("Login SocialStudy");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -125,7 +156,7 @@ public class JFLogin extends JFrame {
 							stmt.close();
 							intTentativas++;
 							if(intTentativas > 3){
-								new JFLogin(conn).setVisible(true);
+								new JFLogin(conn, false).setVisible(true);
 								dispose();
 							}
 					    }
@@ -157,6 +188,40 @@ public class JFLogin extends JFrame {
 		}
 		
 	}
+	
+	
+	public boolean verificarLogin(String email, String senhaCodif) {
+		
+		try {
+			PreparedStatement stmt = null;
+	        String sql;
+	        sql = "SELECT * FROM users where usr_email = ?";
+	        stmt = conn.prepareStatement(sql);
+	        stmt.setString(1, email);
+	        ResultSet rs = stmt.executeQuery();
+		    if(rs.next()){
+		    	if(makeSHA1Hash(rs.getString("usr_senha")).equals(senhaCodif)){
+			    	int usrID  = rs.getInt("usr_id");
+				    new JFPainel(usrID, conn).setVisible(true);
+				    rs.close();
+				    stmt.close();
+				    return true;
+		    	}else{
+				    rs.close();
+				    stmt.close();
+				    deletarArquivoALCES();
+				    return false;
+		    	}
+		    }else{
+				rs.close();
+				stmt.close();
+			    return false;
+		    }
+		} catch (Exception e) {
+			// TODO: handle exception
+		    return false;
+		}
+	}
 	public void salvarArquivo(){
 		try {
 	   		FileWriter arq = new FileWriter("conf/.email.ss");
@@ -180,4 +245,30 @@ public class JFLogin extends JFrame {
 			
 		}
 	}
+	public void deletarArquivoALCES(){
+		try {
+			File diretorio = new File("conf");
+			diretorio.mkdir();
+			File arqF = new File(diretorio, ".alces.ss");
+			arqF.delete();
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+	
+	public static String makeSHA1Hash(String input)
+            throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("SHA1");
+        md.reset();
+        byte[] buffer = input.getBytes();
+        md.update(buffer);
+        byte[] digest = md.digest();
+ 
+        String hexStr = "";
+        for (int i = 0; i < digest.length; i++) {
+            hexStr += Integer.toString((digest[i] & 0xff) + 0x100, 16).substring(1);
+        }
+        return hexStr;
+    }
 }

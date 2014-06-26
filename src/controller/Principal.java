@@ -17,8 +17,8 @@ public class Principal {
 				try {
 					Conexao objCon = new Conexao();
 					Connection conn = objCon.conexao;
-					JFLogin window = new JFLogin(conn);
-					window.setVisible(true);
+					JFLogin window = new JFLogin(conn, true);
+					window.setVisible(false);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
