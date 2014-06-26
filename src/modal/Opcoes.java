@@ -1,10 +1,19 @@
 package modal;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Scanner;
+
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JSpinner;
+import javax.swing.JToggleButton;
 
 public class Opcoes {
 	private int intTempoVeri;
@@ -88,13 +97,79 @@ public class Opcoes {
 		}
 	}
 	
-	public void salvarAlteracies(){
-		
+	public void salvarAlteracies(ActionListener actionListener, ActionEvent arg0, JComboBox comboBox, JSpinner spinner, JToggleButton tglbtnMinhasRespostas, JToggleButton tglbtnMeusSeguidores, JToggleButton tglbtnAbrirJuntoDo, JToggleButton tglbtnMinhasPerguntas, JToggleButton tglbtnLogarAutomaticamente){
+		try {
+			FileReader arq = new FileReader("conf/.info.ss");
+			BufferedReader lerArq = new BufferedReader(arq);
+			String linha;
+			while((linha = lerArq.readLine()) != null){
+				String linhaEscrever = "";
+				try {
+					
+					if(linha.charAt(0) == 'c'){
+						linhaEscrever += linha+"\r\n";
+						linha += lerArq.readLine();
+						if(comboBox.getSelectedIndex() == 0) linhaEscrever += String.valueOf(spinner.getValue())+"\r\n";
+						else if(comboBox.getSelectedIndex() == 1) linhaEscrever += String.valueOf(Integer.parseInt((String) spinner.getValue())*60)+"\r\n";
+						linha = lerArq.readLine();
+						String novaLinha = "";
+						if(tglbtnMinhasRespostas.isSelected()) novaLinha += "t"; else novaLinha += "f";
+						if(tglbtnMinhasPerguntas.isSelected()) novaLinha += "t"; else novaLinha += "f";
+						if(tglbtnMeusSeguidores.isSelected()) novaLinha += "t"; else novaLinha += "f";
+						if(tglbtnAbrirJuntoDo.isSelected()) novaLinha += "t"; else novaLinha += "f";
+						if(tglbtnLogarAutomaticamente.isSelected()) novaLinha += "t"; else novaLinha += "f";
+						linhaEscrever += novaLinha+"\r\n";
+					}else{
+						linhaEscrever += linha+"\r\n";
+					}
+					FileWriter arqW = new FileWriter("conf/.info.ss");
+					arqW.write(linhaEscrever);
+					arqW.close();
+				} catch (Exception e) {
+					// TODO: handle exception
+					try {
+						File diretorio = new File("conf");
+						diretorio.mkdir();
+						File arqF = new File(diretorio, ".info.ss");
+						arqF.createNewFile();
+						
+						actionListener.actionPerformed(arg0);
+						
+					} catch (Exception e2) {
+						// TODO: handle exception
+					}
+				}
+			}
+			
+			
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "Erro: "+e);
+		}
 	}
-	public void resetarAlteracoes(){
-		
+	public void resetarAlteracoes(ActionListener actionListener, ActionEvent arg0){
+		try {
+			FileWriter arqW;
+			arqW = new FileWriter("conf/.info.ss");
+	   		arqW.write("c"+"\r\n");
+	   		arqW.write("120"+"\r\n");
+	   		arqW.write("tttttt"+"\r\n");
+	   		arqW.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			try {
+				File diretorio = new File("conf");
+				diretorio.mkdir();
+				File arqF = new File(diretorio, ".info.ss");
+				arqF.createNewFile();
+				
+				actionListener.actionPerformed(arg0);
+				
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+		}
 	}
-	public void fechar(){
+	public void fechar(JFrame form){
 		
 	}
 

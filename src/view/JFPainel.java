@@ -56,10 +56,10 @@ public class JFPainel extends JFrame {
 	String usrNome = "", usrSobrenome = "", usrGenero = "", usrImage = "";
 	private String usrSenha = "", usrEmail = "";
 	int usrNivel = 0;
-	private JToggleButton tglbtnLogarAutomaticamente;
 	private JComboBox comboBox;
 	private JSpinner spinner;
-	private JToggleButton tglbtnMinhasRespostas, tglbtnMeusSeguidores, tglbtnAbrirJuntoDo, tglbtnMinhasPerguntas;
+	private JToggleButton tglbtnMinhasRespostas, tglbtnMeusSeguidores, tglbtnAbrirJuntoDo, tglbtnMinhasPerguntas, tglbtnLogarAutomaticamente;
+	private JFrame form = this; 
 	
 	Connection con;
 	
@@ -163,6 +163,11 @@ public class JFPainel extends JFrame {
 		panel.add(btnSair);
 		
 		JButton btnFechar = new JButton("Fechar");
+		btnFechar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				objOpc.fechar(form);
+			}
+		});
 		btnFechar.setBounds(297, 166, 89, 23);
 		panel.add(btnFechar);
 		
@@ -217,55 +222,7 @@ public class JFPainel extends JFrame {
 		JButton btnSalvarConfiguraes = new JButton("Salvar Configura\u00E7\u00F5es");
 		btnSalvarConfiguraes.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				if(!tglbtnLogarAutomaticamente.isSelected()){
-					try {
-						FileReader arq = new FileReader("conf/.info.ss");
-						BufferedReader lerArq = new BufferedReader(arq);
-						String linha;
-						while((linha = lerArq.readLine()) != null){
-							String linhaEscrever = "";
-							try {
-								
-								if(linha.charAt(0) == 'c'){
-									linhaEscrever += linha+"\r\n";
-									linha += lerArq.readLine();
-									if(comboBox.getSelectedIndex() == 0) linhaEscrever += String.valueOf(spinner.getValue())+"\r\n";
-									else if(comboBox.getSelectedIndex() == 1) linhaEscrever += String.valueOf(Integer.parseInt((String) spinner.getValue())*60)+"\r\n";
-									linha = lerArq.readLine();
-									String novaLinha = "";
-									if(tglbtnMinhasRespostas.isSelected()) novaLinha += "t"; else novaLinha += "f";
-									if(tglbtnMinhasPerguntas.isSelected()) novaLinha += "t"; else novaLinha += "f";
-									if(tglbtnMeusSeguidores.isSelected()) novaLinha += "t"; else novaLinha += "f";
-									if(tglbtnAbrirJuntoDo.isSelected()) novaLinha += "t"; else novaLinha += "f";
-									if(tglbtnLogarAutomaticamente.isSelected()) novaLinha += "t"; else novaLinha += "f";
-									linhaEscrever += novaLinha+"\r\n";
-								}else{
-									linhaEscrever += linha+"\r\n";
-								}
-								FileWriter arqW = new FileWriter("conf/.info.ss");
-								arqW.write(linhaEscrever);
-								arqW.close();
-							} catch (Exception e) {
-								// TODO: handle exception
-								try {
-									File diretorio = new File("conf");
-									diretorio.mkdir();
-									File arqF = new File(diretorio, ".info.ss");
-									arqF.createNewFile();
-									
-									actionPerformed(arg0);
-									
-								} catch (Exception e2) {
-									// TODO: handle exception
-								}
-							}
-						}
-						
-						
-					} catch (Exception e) {
-						JOptionPane.showMessageDialog(null, "Erro: "+e);
-					}
-				}
+				objOpc.salvarAlteracies(this, arg0, comboBox, spinner, tglbtnMinhasRespostas, tglbtnMeusSeguidores, tglbtnAbrirJuntoDo, tglbtnMinhasPerguntas, tglbtnLogarAutomaticamente);
 			}
 		});
 		btnSalvarConfiguraes.setBounds(10, 485, 180, 54);
@@ -274,28 +231,7 @@ public class JFPainel extends JFrame {
 		JButton btnRedefinirPadro = new JButton("Redefinir Padr\u00E3o");
 		btnRedefinirPadro.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				
-				try {
-					FileWriter arqW;
-					arqW = new FileWriter("conf/.info.ss");
-			   		arqW.write("c"+"\r\n");
-			   		arqW.write("120"+"\r\n");
-			   		arqW.write("tttttt"+"\r\n");
-			   		arqW.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					try {
-						File diretorio = new File("conf");
-						diretorio.mkdir();
-						File arqF = new File(diretorio, ".info.ss");
-						arqF.createNewFile();
-						
-						actionPerformed(arg0);
-						
-					} catch (Exception e2) {
-						// TODO: handle exception
-					}
-				}
+				objOpc.resetarAlteracoes(this, arg0);
 			}
 		});
 		btnRedefinirPadro.setBounds(200, 485, 180, 54);

@@ -4,6 +4,7 @@ import java.awt.EventQueue;
 import java.sql.Connection;
 
 import modal.Conexao;
+import modal.Opcoes;
 import view.AWSplash;
 import view.JFLogin;
 
@@ -17,8 +18,16 @@ public class Principal {
 				try {
 					Conexao objCon = new Conexao();
 					Connection conn = objCon.conexao;
-					JFLogin window = new JFLogin(conn, true);
-					window.setVisible(false);
+					Opcoes objOpc = new Opcoes();
+					
+					if(objOpc.isBlnLogAuto()){
+						JFLogin window = new JFLogin(conn, true);
+						window.setVisible(false);
+					}else{
+						JFLogin window = new JFLogin(conn, false);
+						window.setVisible(true);
+					}
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
