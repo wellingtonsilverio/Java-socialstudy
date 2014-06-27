@@ -10,6 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import modal.Atualizacao;
 import modal.Conexao;
 import modal.Opcoes;
 
@@ -59,8 +60,10 @@ public class JFPainel extends JFrame {
 	int usrNivel = 0;
 	private JComboBox comboBox;
 	private JSpinner spinner;
-	private JToggleButton tglbtnMinhasRespostas, tglbtnMeusSeguidores, tglbtnAbrirJuntoDo, tglbtnMinhasPerguntas, tglbtnLogarAutomaticamente, btnAbrirMinimizado;
+	private JToggleButton tglbtnMinhasRespostas, tglbtnMeusSeguidores, tglbtnAbrirJuntoDo, tglbtnMinhasPerguntas, tglbtnLogarAutomaticamente, btnAbrirMinimizado, tglbtnFazerBarunhoEm;
 	private JFrame form = this; 
+	
+	public Atualizacao att;
 	
 	private URL urlImage;
 	
@@ -79,6 +82,8 @@ public class JFPainel extends JFrame {
 	 * Create the frame.
 	 */
 	public JFPainel(int usrID, Connection conn) {
+		objOpc.setConn(conn);;
+		objOpc.setUsrID(usrID);
 		this.con = conn;
 		//select do log
 		try {
@@ -241,10 +246,15 @@ public class JFPainel extends JFrame {
 		btnAbrirMinimizado.setBounds(190, 338, 190, 40);
 		contentPane.add(btnAbrirMinimizado);
 		
+		tglbtnFazerBarunhoEm = new JToggleButton("Fazer Barunho em novas Notifica\u00E7\u00F5es");
+		tglbtnFazerBarunhoEm.setSelected(objOpc.isBlnFazerBarulho());
+		tglbtnFazerBarunhoEm.setBounds(190, 389, 190, 40);
+		contentPane.add(tglbtnFazerBarunhoEm);
+		
 		JButton btnSalvarConfiguraes = new JButton("Salvar Configura\u00E7\u00F5es");
 		btnSalvarConfiguraes.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				objOpc.salvarAlteracies(this, arg0, comboBox, spinner, tglbtnMinhasRespostas, tglbtnMeusSeguidores, tglbtnAbrirJuntoDo, tglbtnMinhasPerguntas, tglbtnLogarAutomaticamente, btnAbrirMinimizado);
+				objOpc.salvarAlteracies(this, arg0, comboBox, spinner, tglbtnMinhasRespostas, tglbtnMeusSeguidores, tglbtnAbrirJuntoDo, tglbtnMinhasPerguntas, tglbtnLogarAutomaticamente, btnAbrirMinimizado, tglbtnFazerBarunhoEm);
 			}
 		});
 		btnSalvarConfiguraes.setBounds(10, 485, 180, 54);
@@ -263,6 +273,9 @@ public class JFPainel extends JFrame {
 			salvarArquivoES();
 		}
 		if(objOpc.isBlnAbrirTray()) objOpc.fechar(form); else setVisible(true);
+		
+		att = new Atualizacao(objOpc);
+		
 	}
 	
 	public static String makeSHA1Hash(String input)

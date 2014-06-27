@@ -6,6 +6,7 @@ import java.sql.Connection;
 import modal.Conexao;
 import modal.Opcoes;
 import view.AWSplash;
+import view.JDJanela;
 import view.JFLogin;
 
 public class Principal {

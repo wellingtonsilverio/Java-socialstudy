@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.Connection;
 import java.util.Scanner;
 
 import javafx.stage.Popup;
@@ -29,13 +30,31 @@ import javax.swing.JFrame;
 import javax.swing.UIManager;
 
 public class Opcoes {
-	private int intTempoVeri;
-	private boolean blnNovaResp, blnNovaPerg, blnSeguidor, blnAbrirWin, blnLogAuto, blnAbrirTray;
+	private int intTempoVeri, usrID;
+	private boolean blnNovaResp, blnNovaPerg, blnSeguidor, blnAbrirWin, blnLogAuto, blnAbrirTray, blnFazerBarulho;
 	private JFrame jForm;
+	private Connection conn;
 	
 	private SystemTray tray;
 	private TrayIcon icoTray;
 	
+	
+	public Connection getConn() {
+		return conn;
+	}
+
+	public void setConn(Connection conn) {
+		this.conn = conn;
+	}
+
+	public int getUsrID() {
+		return usrID;
+	}
+
+	public void setUsrID(int usrID) {
+		this.usrID = usrID;
+	}
+
 	public int getIntTempoVeri() {
 		return intTempoVeri;
 	}
@@ -91,6 +110,14 @@ public class Opcoes {
 	public void setBlnLogAuto(boolean blnLogAuto) {
 		this.blnLogAuto = blnLogAuto;
 	}
+	
+	public boolean isBlnFazerBarulho(){
+		return blnFazerBarulho;
+	}
+	
+	public void setBlnFazerBarulho(boolean blnBlnFazerBarulho){
+		this.blnFazerBarulho = blnBlnFazerBarulho;
+	}
 
 	public Opcoes(){
 		try {
@@ -108,6 +135,7 @@ public class Opcoes {
 					if(linha.charAt(3) == 't') blnAbrirWin = true; else blnAbrirWin = false;
 					if(linha.charAt(4) == 't') blnLogAuto = true; else blnLogAuto = false;
 					if(linha.charAt(5) == 't') blnAbrirTray = true; else blnAbrirTray = false;
+					if(linha.charAt(6) == 't') blnFazerBarulho = true; else blnFazerBarulho = false;
 				}
 			}
 			
@@ -121,10 +149,21 @@ public class Opcoes {
 			blnAbrirWin = true;
 			blnLogAuto = true;
 			blnAbrirTray = true;
+			blnFazerBarulho = true;
 		}
 	}
 	
-	public void salvarAlteracies(ActionListener actionListener, ActionEvent arg0, JComboBox comboBox, JSpinner spinner, JToggleButton tglbtnMinhasRespostas, JToggleButton tglbtnMeusSeguidores, JToggleButton tglbtnAbrirJuntoDo, JToggleButton tglbtnMinhasPerguntas, JToggleButton tglbtnLogarAutomaticamente, JToggleButton btnAbrirMinimizado){
+	public void salvarAlteracies(ActionListener actionListener,
+			ActionEvent arg0,
+			JComboBox comboBox,
+			JSpinner spinner,
+			JToggleButton tglbtnMinhasRespostas,
+			JToggleButton tglbtnMeusSeguidores,
+			JToggleButton tglbtnAbrirJuntoDo,
+			JToggleButton tglbtnMinhasPerguntas,
+			JToggleButton tglbtnLogarAutomaticamente,
+			JToggleButton btnAbrirMinimizado,
+			JToggleButton tglbtnFazerBarunhoEm){
 		try {
 			FileReader arq = new FileReader("conf/.info.ss");
 			BufferedReader lerArq = new BufferedReader(arq);
@@ -146,6 +185,7 @@ public class Opcoes {
 						if(tglbtnAbrirJuntoDo.isSelected()) novaLinha += "t"; else novaLinha += "f";
 						if(tglbtnLogarAutomaticamente.isSelected()) novaLinha += "t"; else novaLinha += "f";
 						if(btnAbrirMinimizado.isSelected()) novaLinha += "t"; else novaLinha += "f";
+						if(tglbtnFazerBarunhoEm.isSelected()) novaLinha += "t"; else novaLinha += "f";
 						linhaEscrever += novaLinha+"\r\n";
 					}else{
 						linhaEscrever += linha+"\r\n";
@@ -180,7 +220,7 @@ public class Opcoes {
 			arqW = new FileWriter("conf/.info.ss");
 	   		arqW.write("c"+"\r\n");
 	   		arqW.write("120"+"\r\n");
-	   		arqW.write("ttttttt"+"\r\n");
+	   		arqW.write("tttttttt"+"\r\n");
 	   		arqW.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -262,5 +302,7 @@ public class Opcoes {
 			
 		}
 	}
+
+
 
 }
