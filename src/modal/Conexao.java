@@ -25,7 +25,40 @@ public class Conexao {
 		}
 		 
 	}
-
 	
+	public ResultSet select(String sql){
+		try {
+			PreparedStatement stmt = null;
+	        stmt = conexao.prepareStatement(sql);
+	        return stmt.executeQuery();
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "Erro: "+e);
+			return null;
+		}
+	}
+	
+	public ResultSet select(String sql, int i){
+		try {
+			PreparedStatement stmt = null;
+	        stmt = conexao.prepareStatement(sql);
+	        stmt.setInt(1, i);
+	        return stmt.executeQuery();
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "Erro: "+e);
+			return null;
+		}
+	}
+	
+	public ResultSet select(String sql, String arg0, String arg1){
+		try {
+			PreparedStatement stmt = null;
+	        stmt = conexao.prepareStatement(sql);
+	        stmt.setString(1, arg0);
+	        stmt.setString(2, arg1);
+	        return stmt.executeQuery();
+		} catch (Exception e) {
+			return null;
+		}
+	}
 	 
 }

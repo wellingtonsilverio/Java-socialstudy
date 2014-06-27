@@ -6,11 +6,13 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
@@ -22,6 +24,8 @@ import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import javax.swing.SwingConstants;
 
 public class JDJanela extends JDialog {
 
@@ -35,6 +39,7 @@ public class JDJanela extends JDialog {
 	public JDJanela(String usrImage, String usrNome, String attDesc, String attDate, String attTipo, int y) {
 		setUndecorated(true);
 		setBounds(100, 100, 400, 200);
+		setIconImage(Toolkit.getDefaultToolkit().getImage("Imagens/logo.png"));
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(null);
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -62,7 +67,8 @@ public class JDJanela extends JDialog {
 		contentPanel.add(lblNome);
 		
 		JLabel lblTexto = new JLabel(attDesc);
-		lblTexto.setBounds(120, 46, 270, 143);
+		lblTexto.setVerticalAlignment(SwingConstants.TOP);
+		lblTexto.setBounds(120, 46, 270, 119);
 		contentPanel.add(lblTexto);
 		
 		JButton btnOlhar = new JButton("Olhar");
@@ -77,20 +83,29 @@ public class JDJanela extends JDialog {
 		});
 		btnFechar.setBounds(10, 157, 100, 30);
 		contentPanel.add(btnFechar);
+		JLabel lblData = new JLabel(attDate);
+		lblData.setHorizontalAlignment(SwingConstants.CENTER);
+		lblData.setFont(new Font("Tahoma", Font.PLAIN, 7));
+		lblData.setBounds(260, 176, 130, 11);
+		contentPanel.add(lblData);
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		GraphicsDevice defaultScreen = ge.getDefaultScreenDevice();
 		Rectangle rect = defaultScreen.getDefaultConfiguration().getBounds();
 		int x = ((int) rect.getMaxX() - getWidth())-10;
-		if(y >= rect.getMaxY()-210){
-			double Rest = y - (rect.getMaxY());
+		if((y+200) >= rect.getMaxY()){
 			x -= getWidth()+10;
-			y -= rect.getMaxY()-10;
-			y -= Rest;
-			if(y >= rect.getMaxY()-210){
-				double Rest2 = y - rect.getMaxY();
-				x -= (getWidth()+10)*2;
-				y -= rect.getMaxY()-10;
-				y -= Rest;
+			y = (y - (int) rect.getMaxY())+30;
+			if((y+200) >= rect.getMaxY()){
+				x -= getWidth()+10;
+				y = (y - (int) rect.getMaxY())+30;
+				if((y+200) >= rect.getMaxY()){
+					x -= getWidth()+10;
+					y = (y - (int) rect.getMaxY())+30;
+					if((y+200) >= rect.getMaxY()){
+						x -= getWidth()+10;
+						y = (y - (int) rect.getMaxY())+30;
+					}
+				}
 			}
 		}
 		setLocation(x, y);

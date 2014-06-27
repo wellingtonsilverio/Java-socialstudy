@@ -26,6 +26,8 @@ import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import javax.swing.JToggleButton;
 
+import modal.Conexao;
+
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
@@ -35,7 +37,7 @@ public class JFLogin extends JFrame {
 	private JPanel contentPane;
 	private JTextField tfEmail;
 	private JPasswordField tfSenha;
-	private Connection conn;
+	private Conexao conn;
 	private String emailSalvo = null;
 	private JToggleButton tglbtnLembrarEmail;
 	private int intTentativas = 0;
@@ -44,9 +46,9 @@ public class JFLogin extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public JFLogin(Connection con, boolean autoLog){
+	public JFLogin(Conexao objCon, boolean autoLog){
 		
-		this.conn = con;	
+		this.conn = objCon;	
 		
 		
 		if(autoLog){
@@ -66,7 +68,7 @@ public class JFLogin extends JFrame {
 				}
 			} catch (Exception e) {
 				// TODO: handle exception
-				new JFLogin(con, false).setVisible(true);
+				new JFLogin(conn, false).setVisible(true);
 				this.dispose();
 			}
 		}
@@ -135,7 +137,7 @@ public class JFLogin extends JFrame {
 						PreparedStatement stmt = null;
 				        String sql;
 				        sql = "SELECT * FROM users where usr_email = ? AND usr_senha = ?";
-				        stmt = conn.prepareStatement(sql);
+				        stmt = conn.conexao.prepareStatement(sql);
 				        stmt.setString(1, tfEmail.getText());
 				        stmt.setString(2, new String(tfSenha.getPassword()));
 				        ResultSet rs = stmt.executeQuery();
@@ -198,7 +200,7 @@ public class JFLogin extends JFrame {
 			PreparedStatement stmt = null;
 	        String sql;
 	        sql = "SELECT * FROM users where usr_email = ?";
-	        stmt = conn.prepareStatement(sql);
+	        stmt = conn.conexao.prepareStatement(sql);
 	        stmt.setString(1, email);
 	        ResultSet rs = stmt.executeQuery();
 		    if(rs.next()){

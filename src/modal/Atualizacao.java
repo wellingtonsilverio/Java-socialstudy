@@ -26,6 +26,8 @@ public class Atualizacao {
 	
 	private Opcoes objOpc;
 	
+	int y = 10;
+	
 	public Atualizacao(Opcoes Opc){
 		this.objOpc = Opc;
 		
@@ -65,96 +67,27 @@ public class Atualizacao {
 			public void run() {
 				//select nos refesh, se tiver uma com tipo e id maior que o ultAtt vai abrir uma caixa lateral
 				try {
-					int y = 10;
-					
-					PreparedStatement stmt = null;
-			        String sql;
-			        sql = "SELECT * FROM refesh where user_id = ?";
-			        stmt = objOpc.getConn().prepareStatement(sql);
-			        stmt.setInt(1, objOpc.getUsrID());
-			        ResultSet rs = stmt.executeQuery();
-			        while(rs.next()){
-			        	delay = 1;
-			        	if(rs.getInt("att_tipo") == 3 && rs.getInt("att_id") > intIdUltAttPerg){
-			        		PreparedStatement stmt2 = null;
-					        String sql2;
-					        sql2 = "SELECT * FROM users where usr_id = ?";
-					        stmt2 = objOpc.getConn().prepareStatement(sql2);
-					        stmt2.setInt(1, rs.getInt("user_id"));
-					        ResultSet rs2 = stmt2.executeQuery();
-					        if(rs2.next()){
-					        	new JDJanela(
-				        				rs2.getString("usr_image"),
-				        				rs2.getString("usr_nome"),
-				        				rs.getString("att_desc"),
-				        				rs.getString("att_date"),
-				        				rs.getString("att_tipo"), y);
-					        	intIdUltAttPerg = rs.getInt("att_id");
-					        	salvar(intIdUltAttPerg, intIdUltAttResp, intIdUltAttSeg);
-					        	y += 210;
-					        }
-			        		
-			        	}else
-			        	if(rs.getInt("att_tipo") == 4 && rs.getInt("att_id") > intIdUltAttResp){
-			        		PreparedStatement stmt2 = null;
-					        String sql2;
-					        sql2 = "SELECT * FROM users where usr_id = ?";
-					        stmt2 = objOpc.getConn().prepareStatement(sql2);
-					        stmt2.setInt(1, rs.getInt("user_id"));
-					        ResultSet rs2 = stmt2.executeQuery();
-					        if(rs2.next()){
-					        	new JDJanela(
-				        				rs2.getString("usr_image"),
-				        				rs2.getString("usr_nome"),
-				        				rs.getString("att_desc"),
-				        				rs.getString("att_date"),
-				        				rs.getString("att_tipo"), y);
-					        	intIdUltAttResp = rs.getInt("att_id");
-					        	salvar(intIdUltAttPerg, intIdUltAttResp, intIdUltAttSeg);
-					        	y += 210;
-					        }
-			        	}else
-			        	if(rs.getInt("att_tipo") == 1 && rs.getInt("att_id") > intIdUltAttSeg){
-			        		PreparedStatement stmt2 = null;
-					        String sql2;
-					        sql2 = "SELECT * FROM users where usr_id = ?";
-					        stmt2 = objOpc.getConn().prepareStatement(sql2);
-					        stmt2.setInt(1, rs.getInt("user_id"));
-					        ResultSet rs2 = stmt2.executeQuery();
-					        if(rs2.next()){
-					        	new JDJanela(
-				        				rs2.getString("usr_image"),
-				        				rs2.getString("usr_nome"),
-				        				rs.getString("att_desc"),
-				        				rs.getString("att_date"),
-				        				rs.getString("att_tipo"), y);
-					        	intIdUltAttSeg = rs.getInt("att_id");
-					        	salvar(intIdUltAttPerg, intIdUltAttResp, intIdUltAttSeg);
-					        	y += 210;
-					        }
-			        	}else{
-			        		y = 10;
-			        	}
-			        }
-					//this.con.close();
+					if(objOpc.isBlnSeguidor()){
+						ResultSet rs = objOpc.getConn().select("select * FROM usr_usr INNER JOIN refesh ON usr_usr.flw_quem = refesh.user_id WHERE usr_usr.flw_de = ?", objOpc.getUsrID());
+						while(rs.next()){
+							if(rs.getInt("att_id") > intIdUltAttSeg){
+								ResultSet selectUsers = objOpc.getConn().select("select * from users where usr_id = ?", rs.getInt("user_id"));
+								selectUsers.next();
+								new JDJanela(selectUsers.getString("usr_image"), selectUsers.getString("usr_nome"), rs.getString("att_desc"), rs.getString("att_date"), rs.getString("att_tipo"), y);
+								y += 210;
+								intIdUltAttSeg = rs.getInt("att_id");
+								salvar(intIdUltAttPerg, intIdUltAttResp, intIdUltAttSeg);
+							}
+						}
+					}
 				} catch (Exception e) {
 					// TODO: handle exception
-					//JOptionPane.showMessageDialog(null, "Erro: "+e);
 				}
 			}
 		}, delay, interval);
 		
 	}
 	
-	public void mostrarCaixa(int intOque, String strMensagem){
-		
-	}
-	public void fechar(){
-		
-	}
-	public void click(String strLink){
-		
-	}
 	public boolean verificarAtt(boolean blnNovaResp, boolean blnNovaPerg, boolean blnSeguidor){
 		return false;
 	}

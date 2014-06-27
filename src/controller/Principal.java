@@ -18,14 +18,13 @@ public class Principal {
 			public void run() {
 				try {
 					Conexao objCon = new Conexao();
-					Connection conn = objCon.conexao;
 					Opcoes objOpc = new Opcoes();
 					
 					if(objOpc.isBlnLogAuto()){
-						JFLogin window = new JFLogin(conn, true);
+						JFLogin window = new JFLogin(objCon, true);
 						window.setVisible(false);
 					}else{
-						JFLogin window = new JFLogin(conn, false);
+						JFLogin window = new JFLogin(objCon, false);
 						window.setVisible(true);
 					}
 					

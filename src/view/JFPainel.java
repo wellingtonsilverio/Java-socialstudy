@@ -67,7 +67,7 @@ public class JFPainel extends JFrame {
 	
 	private URL urlImage;
 	
-	Connection con;
+	Conexao con;
 	
 	//Imagem no Painel
 	private BufferedImage image;
@@ -81,8 +81,8 @@ public class JFPainel extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public JFPainel(int usrID, Connection conn) {
-		objOpc.setConn(conn);;
+	public JFPainel(int usrID, Conexao conn) {
+		objOpc.setConn(conn);
 		objOpc.setUsrID(usrID);
 		this.con = conn;
 		//select do log
@@ -90,7 +90,7 @@ public class JFPainel extends JFrame {
 			PreparedStatement stmt = null;
 	        String sql;
 	        sql = "SELECT * FROM users where usr_id = ?";
-	        stmt = con.prepareStatement(sql);
+	        stmt = con.conexao.prepareStatement(sql);
 	        stmt.setInt(1, usrID);
 	        ResultSet rs = stmt.executeQuery();
 	        if(rs.next()){

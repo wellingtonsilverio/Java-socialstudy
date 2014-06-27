@@ -33,17 +33,17 @@ public class Opcoes {
 	private int intTempoVeri, usrID;
 	private boolean blnNovaResp, blnNovaPerg, blnSeguidor, blnAbrirWin, blnLogAuto, blnAbrirTray, blnFazerBarulho;
 	private JFrame jForm;
-	private Connection conn;
+	private Conexao conn;
 	
 	private SystemTray tray;
 	private TrayIcon icoTray;
 	
 	
-	public Connection getConn() {
+	public Conexao getConn() {
 		return conn;
 	}
 
-	public void setConn(Connection conn) {
+	public void setConn(Conexao conn) {
 		this.conn = conn;
 	}
 
@@ -174,7 +174,7 @@ public class Opcoes {
 					
 					if(linha.charAt(0) == 'c'){
 						linhaEscrever += linha+"\r\n";
-						linha += lerArq.readLine();
+						linha = lerArq.readLine();
 						if(comboBox.getSelectedIndex() == 0) linhaEscrever += String.valueOf(spinner.getValue())+"\r\n";
 						else if(comboBox.getSelectedIndex() == 1) linhaEscrever += String.valueOf(Integer.parseInt((String) spinner.getValue())*60)+"\r\n";
 						linha = lerArq.readLine();
