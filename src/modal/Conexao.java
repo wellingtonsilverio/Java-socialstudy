@@ -11,7 +11,7 @@ public class Conexao {
 	public Conexao(){
 		 String driver = "org.gjt.mm.mysql.Driver";
 		 
-		 String url = "jdbc:mysql://localhost/rss";
+		 String url = "jdbc:mysql://localhost/rss?useUnicode=true&characterEncoding=UTF-8";
 		 String usuario = "root";
 		 String senha = "";
 		 

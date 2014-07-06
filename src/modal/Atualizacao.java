@@ -1,5 +1,8 @@
 package modal;
 
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -14,6 +17,8 @@ import java.util.TimerTask;
 
 import javax.swing.JOptionPane;
 
+import com.sun.javafx.font.Disposer;
+
 import view.JDJanela;
 import view.JFLogin;
 
@@ -23,6 +28,8 @@ public class Atualizacao {
 	private Timer tmrAtualizacao;
 	long delay;
 	long interval;
+	
+	Rectangle rect;
 	
 	private Opcoes objOpc;
 	
@@ -60,11 +67,15 @@ public class Atualizacao {
 		
 		blnBarulho = objOpc.isBlnFazerBarulho();
 		
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		GraphicsDevice defaultScreen = ge.getDefaultScreenDevice();
+		rect = defaultScreen.getDefaultConfiguration().getBounds();
 		
 		tmrAtualizacao = new Timer();
 		tmrAtualizacao.scheduleAtFixedRate(new TimerTask() {
 			
 			public void run() {
+				y = 10;
 				//select nos refesh, se tiver uma com tipo e id maior que o ultAtt vai abrir uma caixa lateral
 				try {
 					if(objOpc.isBlnSeguidor()){
@@ -77,11 +88,57 @@ public class Atualizacao {
 								y += 210;
 								intIdUltAttSeg = rs.getInt("att_id");
 								salvar(intIdUltAttPerg, intIdUltAttResp, intIdUltAttSeg);
+								if((y+210) >= rect.getMaxY()) break;
+							}
+						}
+					}
+					if(objOpc.isBlnNovaPerg()){
+						//pegar o id grupo que participa e pegar as perguntas que foi feito la
+						//qual ele participa
+						ResultSet rs = objOpc.getConn().select("select * from grp_usr where gu_usr = ?", objOpc.getUsrID());
+						while(rs.next()){
+							//pergunta do id do grupo que ele participa
+							ResultSet selectPergGrups = objOpc.getConn().select("select * from pergunta where pgt_grp = ?", rs.getInt("gu_grp"));
+							while(selectPergGrups.next()){
+								if(selectPergGrups.getInt("pgt_id") > intIdUltAttPerg && selectPergGrups.getInt("pgt_usr") != objOpc.getUsrID()){
+									//usuario que fez a pergunta
+									ResultSet selectUsers = objOpc.getConn().select("select * from users where usr_id = ?", selectPergGrups.getInt("pgt_usr"));
+									selectUsers.next();
+									new JDJanela(selectUsers.getString("usr_image"), selectUsers.getString("usr_nome"), selectPergGrups.getString("pgt_perg"), selectPergGrups.getString("pgt_date"), "11", y);
+									y += 210;
+									intIdUltAttPerg = selectPergGrups.getInt("pgt_id");
+									salvar(intIdUltAttPerg, intIdUltAttResp, intIdUltAttSeg);
+									if((y+210) >= rect.getMaxY()) break;
+								}
+							}
+						}
+					}
+					if(objOpc.isBlnNovaResp()){
+						ResultSet rs = objOpc.getConn().select("select * from grp_usr where gu_usr = ?", objOpc.getUsrID());
+						while(rs.next()){
+							//pergunta do id do grupo que ele participa
+							ResultSet selectPergGrups = objOpc.getConn().select("select * from pergunta where pgt_grp = ?", rs.getInt("gu_grp"));
+							while(selectPergGrups.next()){
+								ResultSet selectResp = objOpc.getConn().select("select * from responder where res_perg = ?", selectPergGrups.getInt("pgt_id"));
+								while(selectResp.next()){
+									if(selectResp.getInt("res_id") > intIdUltAttResp && selectResp.getInt("res_usr") != objOpc.getUsrID()){
+										//usuario que fez a pergunta
+										ResultSet selectUsers = objOpc.getConn().select("select * from users where usr_id = ?", selectResp.getInt("res_usr"));
+										selectUsers.next();
+
+										new JDJanela(selectUsers.getString("usr_image"), selectUsers.getString("usr_nome"), selectPergGrups.getString("pgt_perg")+"<br ><br ><font size='+1'>Resposta:</font><br >"+selectResp.getString("res_resp"), selectResp.getString("res_data"), "12", y);
+										y += 210;
+										intIdUltAttResp = selectResp.getInt("res_id");
+										salvar(intIdUltAttPerg, intIdUltAttResp, intIdUltAttSeg);
+										if((y+210) >= rect.getMaxY()) break;
+									}
+								}
 							}
 						}
 					}
 				} catch (Exception e) {
 					// TODO: handle exception
+					JOptionPane.showMessageDialog(null, "Erro att: "+e);
 				}
 			}
 		}, delay, interval);
@@ -112,6 +169,10 @@ public class Atualizacao {
 				// TODO: handle exception
 			}
 		}
+	}
+
+	public void fechar() {
+		tmrAtualizacao.cancel();
 	}
 
 }

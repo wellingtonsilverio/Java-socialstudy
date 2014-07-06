@@ -5,3 +5,9 @@ http://www.codigosfontes.com.br/utilizando-o-encode-sha1-no-java/
 http://www.guj.com.br/java/6679-deletar-arquivo-fisico
 http://stackoverflow.com/questions/7461477/how-to-hide-a-jframe-in-system-tray-of-taskbar
 http://www.devmedia.com.br/como-configurar-o-timer-para-executar-tarefas-em-intervalos-constantes/2144
+http://stackoverflow.com/questions/22262017/actionevent-and-mouseevent-right-click-java-mac
+http://stackoverflow.com/questions/7461477/how-to-hide-a-jframe-in-system-tray-of-taskbar
+http://www.devmedia.com.br/como-configurar-o-timer-para-executar-tarefas-em-intervalos-constantes/2144
+http://stackoverflow.com/questions/21169487/how-to-position-jframe-to-top-right-of-screen-upon-start
+http://javafree.uol.com.br/topic-867222-RESOLVIDO-Duvida-Timer-TimerTask.html
+http://www.dsc.ufcg.edu.br/~jacques/cursos/map/html/threads/timer.html

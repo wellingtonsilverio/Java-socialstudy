@@ -201,7 +201,7 @@ public class Opcoes {
 						File arqF = new File(diretorio, ".info.ss");
 						arqF.createNewFile();
 						
-						actionListener.actionPerformed(arg0);
+						salvarAlteracies(actionListener, arg0, comboBox, spinner, tglbtnMinhasRespostas, tglbtnMeusSeguidores, tglbtnAbrirJuntoDo, tglbtnMinhasPerguntas, tglbtnLogarAutomaticamente, btnAbrirMinimizado, tglbtnFazerBarunhoEm);
 						
 					} catch (Exception e2) {
 						// TODO: handle exception

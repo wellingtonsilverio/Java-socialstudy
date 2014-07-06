@@ -66,7 +66,7 @@ public class JDJanela extends JDialog {
 		lblNome.setBounds(120, 10, 270, 25);
 		contentPanel.add(lblNome);
 		
-		JLabel lblTexto = new JLabel(attDesc);
+		JLabel lblTexto = new JLabel("<html><meta http-equiv='Content-Type' content='text/html; charset=utf-8' />"+attDesc+"</html>");
 		lblTexto.setVerticalAlignment(SwingConstants.TOP);
 		lblTexto.setBounds(120, 46, 270, 119);
 		contentPanel.add(lblTexto);
@@ -92,22 +92,6 @@ public class JDJanela extends JDialog {
 		GraphicsDevice defaultScreen = ge.getDefaultScreenDevice();
 		Rectangle rect = defaultScreen.getDefaultConfiguration().getBounds();
 		int x = ((int) rect.getMaxX() - getWidth())-10;
-		if((y+200) >= rect.getMaxY()){
-			x -= getWidth()+10;
-			y = (y - (int) rect.getMaxY())+30;
-			if((y+200) >= rect.getMaxY()){
-				x -= getWidth()+10;
-				y = (y - (int) rect.getMaxY())+30;
-				if((y+200) >= rect.getMaxY()){
-					x -= getWidth()+10;
-					y = (y - (int) rect.getMaxY())+30;
-					if((y+200) >= rect.getMaxY()){
-						x -= getWidth()+10;
-						y = (y - (int) rect.getMaxY())+30;
-					}
-				}
-			}
-		}
 		setLocation(x, y);
 		setVisible(true);
 		

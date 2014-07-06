@@ -175,6 +175,7 @@ public class JFPainel extends JFrame {
 				int dLogoof = JOptionPane.showConfirmDialog(null, "Deseja fazer logoff?");
 				if(dLogoof == JOptionPane.YES_OPTION){
 					new JFLogin(con, false).setVisible(true);
+					att.fechar();
 					dispose();
 				}else if(dLogoof == JOptionPane.NO_OPTION){
 					System.exit(0);
