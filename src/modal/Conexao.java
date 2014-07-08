@@ -20,8 +20,8 @@ public class Conexao {
 			this.conexao = DriverManager.getConnection(url,usuario,senha);
 	         
 		} catch (Exception e) {
-			// TODO: handle exception
-			JOptionPane.showMessageDialog(null, "Erro: "+e);
+			JOptionPane.showMessageDialog(null, "Você não está conectado a internet.","Erro na Conexão",JOptionPane.ERROR_MESSAGE);
+			System.exit(0);
 		}
 		 
 	}
@@ -32,7 +32,7 @@ public class Conexao {
 	        stmt = conexao.prepareStatement(sql);
 	        return stmt.executeQuery();
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(null, "Erro: "+e);
+			JOptionPane.showMessageDialog(null, "Erro 01.");
 			return null;
 		}
 	}
@@ -44,7 +44,7 @@ public class Conexao {
 	        stmt.setInt(1, i);
 	        return stmt.executeQuery();
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(null, "Erro: "+e);
+			JOptionPane.showMessageDialog(null, "Erro 02.");
 			return null;
 		}
 	}
@@ -57,6 +57,7 @@ public class Conexao {
 	        stmt.setString(2, arg1);
 	        return stmt.executeQuery();
 		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "Erro 03.");
 			return null;
 		}
 	}

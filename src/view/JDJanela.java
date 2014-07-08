@@ -9,6 +9,7 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 
 import javax.imageio.ImageIO;
+import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -21,6 +22,7 @@ import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeListener;
 import java.net.URL;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -35,6 +37,8 @@ public class JDJanela extends JDialog {
 	private URL urlImage;
 	private BufferedImage image;
 
+	String urlSite = "http://localhost/rss";
+
 	
 	public JDJanela(String usrImage, String usrNome, String attDesc, String attDate, String attTipo, int y) {
 		setUndecorated(true);
@@ -46,7 +50,7 @@ public class JDJanela extends JDialog {
 		contentPanel.setLayout(null);
 		try {
 			try {
-				urlImage = new URL("http://localhost/rss/pags_logon/img/"+usrImage);
+				urlImage = new URL(urlSite+"/pags_logon/img/"+usrImage);
 			} catch (Exception e) {
 				// TODO: handle exception
 				urlImage = null;
@@ -72,6 +76,11 @@ public class JDJanela extends JDialog {
 		contentPanel.add(lblTexto);
 		
 		JButton btnOlhar = new JButton("Olhar");
+		btnOlhar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				//URL nav = new URL(urlSite+"/index.php?uid=5");
+			}
+		});
 		btnOlhar.setBounds(10, 121, 100, 30);
 		contentPanel.add(btnOlhar);
 		

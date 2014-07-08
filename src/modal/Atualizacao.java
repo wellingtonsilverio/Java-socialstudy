@@ -28,6 +28,8 @@ public class Atualizacao {
 	private Timer tmrAtualizacao;
 	long delay;
 	long interval;
+
+	String urlSite = "http://localhost/rss";
 	
 	Rectangle rect;
 	
@@ -78,7 +80,7 @@ public class Atualizacao {
 				y = 10;
 				//select nos refesh, se tiver uma com tipo e id maior que o ultAtt vai abrir uma caixa lateral
 				try {
-					if(objOpc.isBlnSeguidor()){
+					if(objOpc.isBlnSeguidor() && (y+210) < rect.getMaxY()){
 						ResultSet rs = objOpc.getConn().select("select * FROM usr_usr INNER JOIN refesh ON usr_usr.flw_quem = refesh.user_id WHERE usr_usr.flw_de = ?", objOpc.getUsrID());
 						while(rs.next()){
 							if(rs.getInt("att_id") > intIdUltAttSeg){
@@ -92,7 +94,7 @@ public class Atualizacao {
 							}
 						}
 					}
-					if(objOpc.isBlnNovaPerg()){
+					if(objOpc.isBlnNovaPerg() && (y+210) < rect.getMaxY()){
 						//pegar o id grupo que participa e pegar as perguntas que foi feito la
 						//qual ele participa
 						ResultSet rs = objOpc.getConn().select("select * from grp_usr where gu_usr = ?", objOpc.getUsrID());
@@ -113,7 +115,7 @@ public class Atualizacao {
 							}
 						}
 					}
-					if(objOpc.isBlnNovaResp()){
+					if(objOpc.isBlnNovaResp() && (y+210) < rect.getMaxY()){
 						ResultSet rs = objOpc.getConn().select("select * from grp_usr where gu_usr = ?", objOpc.getUsrID());
 						while(rs.next()){
 							//pergunta do id do grupo que ele participa
@@ -125,7 +127,6 @@ public class Atualizacao {
 										//usuario que fez a pergunta
 										ResultSet selectUsers = objOpc.getConn().select("select * from users where usr_id = ?", selectResp.getInt("res_usr"));
 										selectUsers.next();
-
 										new JDJanela(selectUsers.getString("usr_image"), selectUsers.getString("usr_nome"), selectPergGrups.getString("pgt_perg")+"<br ><br ><font size='+1'>Resposta:</font><br >"+selectResp.getString("res_resp"), selectResp.getString("res_data"), "12", y);
 										y += 210;
 										intIdUltAttResp = selectResp.getInt("res_id");

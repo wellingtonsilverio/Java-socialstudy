@@ -120,6 +120,9 @@ public class Opcoes {
 	}
 
 	public Opcoes(){
+		Gerar();
+	}
+	public void Gerar(){
 		try {
 			FileReader arq = new FileReader("conf/.info.ss");
 			BufferedReader lerArq = new BufferedReader(arq);
@@ -193,6 +196,7 @@ public class Opcoes {
 					FileWriter arqW = new FileWriter("conf/.info.ss");
 					arqW.write(linhaEscrever);
 					arqW.close();
+					Gerar();
 				} catch (Exception e) {
 					// TODO: handle exception
 					try {
@@ -211,14 +215,20 @@ public class Opcoes {
 			
 			
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(null, "Erro: "+e);
+			try {
+				resetarAlteracoes(actionListener, arg0);
+			} catch (Exception e1) {
+				JOptionPane.showMessageDialog(null, "Erro 04.");
+			}
+			salvarAlteracies(actionListener, arg0, comboBox, spinner, tglbtnMinhasRespostas, tglbtnMeusSeguidores, tglbtnAbrirJuntoDo, tglbtnMinhasPerguntas, tglbtnLogarAutomaticamente, btnAbrirMinimizado, tglbtnFazerBarunhoEm);
+			
 		}
 	}
 	public void resetarAlteracoes(ActionListener actionListener, ActionEvent arg0){
 		try {
 			FileWriter arqW;
 			arqW = new FileWriter("conf/.info.ss");
-	   		arqW.write("c"+"\r\n");
+	   		arqW.write("config"+"\r\n");
 	   		arqW.write("120"+"\r\n");
 	   		arqW.write("tttttttt"+"\r\n");
 	   		arqW.close();

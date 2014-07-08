@@ -148,7 +148,6 @@ public class JFLogin extends JFrame {
 						   new JFPainel(usrID, conn).setVisible(true);
 						   if(tglbtnLembrarEmail.isSelected()){
 							   salvarArquivo();
-							   
 						   }
 						   rs.close();
 						   stmt.close();

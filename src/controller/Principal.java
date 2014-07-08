@@ -3,6 +3,8 @@ package controller;
 import java.awt.EventQueue;
 import java.sql.Connection;
 
+import javax.swing.JOptionPane;
+
 import modal.Conexao;
 import modal.Opcoes;
 import view.AWSplash;
@@ -29,7 +31,7 @@ public class Principal {
 					}
 					
 				} catch (Exception e) {
-					e.printStackTrace();
+					System.exit(0);
 				}
 			}
 		});
